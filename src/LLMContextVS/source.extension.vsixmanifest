@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="LLMContextVS.0b271c26-d001-4c5a-81c5-b66b74fc1727" Version="1.0.0" Language="en-US" Publisher="Community" />
+    <DisplayName>ceLLMate</DisplayName>
+    <Description xml:space="preserve">A powerful Visual Studio extension that sends rich, configurable full-solution context (projects, files, structure, active documents, selections) directly to your local LLM servers: Ollama or LM Studio (OpenAI-compatible).
+
+Features:
+- Chat window with streaming responses
+- Context controls: full solution, current file, selection, or custom
+- Highly configurable (endpoints, models, ignore patterns, context limits)
+- Works with Visual Studio 2022 and Visual Studio 2026
+- 100% local - zero data leaves your machine
+
+Compatible with any local model that supports the OpenAI chat completions API format.</Description>
+    <MoreInfo>https://github.com/fordg/LLMContextVS</MoreInfo>
+    <Icon>Assets\icon.png</Icon>
+    <PreviewImage>Assets\preview.png</PreviewImage>
+    <Tags>llm, ollama, lm-studio, local-ai, ai, copilot, chat, context, solution, coding-assistant</Tags>
+  </Metadata>
+
+  <Installation>
+    <!-- Target VS 2022 (17.x) and VS 2026+ (18+) -->
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,)">
+      <ProductArchitecture>arm64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,)">
+      <ProductArchitecture>arm64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0,)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0,)">
+      <ProductArchitecture>arm64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+
+</PackageManifest>

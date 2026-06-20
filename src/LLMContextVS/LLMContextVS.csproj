@@ -1,0 +1,144 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Override VSIX output path. VsSDK.targets sets TargetVsixContainerName/TargetVsixContainer in a global
+       PropertyGroup at load time using $(TargetName) and $(OutDir) which are empty then (set by Sdk.targets later).
+       Placing this PropertyGroup AFTER the import overrides those empty-evaluated values. -->
+  <PropertyGroup>
+    <TargetVsixContainerName>$(AssemblyName).vsix</TargetVsixContainerName>
+    <TargetVsixContainer>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).vsix</TargetVsixContainer>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+
+    <!-- VSIX packaging -->
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <UseCodebase>true</UseCodebase>
+    <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
+    <GenerateVSIXManifest>true</GenerateVSIXManifest>
+    <CreateVsixContainer>true</CreateVsixContainer>
+
+    <!-- Output -->
+    <RootNamespace>LLMContextVS</RootNamespace>
+    <AssemblyName>LLMContextVS</AssemblyName>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Extension metadata used by VSSDK -->
+    <Title>ceLLMate</Title>
+    <Description>Provides complete Visual Studio solution context to local LLMs such as Ollama and LM Studio. Fully configurable chat with your entire codebase using only your local AI server.</Description>
+    <Authors>Local Developer</Authors>
+    <Company>Community</Company>
+    <Product>ceLLMate</Product>
+    <Copyright>Copyright © 2026</Copyright>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Core Toolkit for easy VS extensibility (supports VS 2022 / 2026) -->
+    <PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.533" />
+    <!-- Aggregated Visual Studio SDK references for 17.x -->
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.11.40262" ExcludeAssets="Runtime" />
+    <!-- Build tools required to produce the VSIX -->
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.12.4059" />
+
+    <!-- Polyfills for net472 (System.Text.Json + Http) -->
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <!-- Include the manifest and assets in the VSIX -->
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\**\*.*">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+
+  <!-- XAML compilation handled by SDK defaults for UseWPF projects -->
+  <PropertyGroup>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Page Include="ToolWindows\LLMChatWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ToolWindows\LLMChatWindowControl.xaml.cs" DependentUpon="LLMChatWindowControl.xaml" />
+  </ItemGroup>
+
+  <!-- VSCT menu definition (compiled to Menus.ctmenu resource) -->
+  <ItemGroup>
+    <VSCTCompile Include="Resources\LLMContextVS.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
+      <AdditionalIncludeDirectories>$(VsSDKIncludes)</AdditionalIncludeDirectories>
+    </VSCTCompile>
+  </ItemGroup>
+
+  <!-- Ensure IntermediateOutputPath is defined before importing VS SDK targets,
+       because Microsoft.VsSDK.targets sets path properties in a global PropertyGroup
+       evaluated before Sdk.targets (which normally defines IntermediateOutputPath). -->
+  <PropertyGroup>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == ''">$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == ''">obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- Import VS SDK build targets (provides CreateVsixContainer, GeneratePkgDef, etc.) -->
+  <Import Project="$(VsSDKInstall)\Microsoft.VsSDK.targets" Condition="'$(VsSDKInstall)' != '' and Exists('$(VsSDKInstall)\Microsoft.VsSDK.targets')" />
+
+  <!-- Override VSIX output path after import - VsSDK.targets uses empty TargetName/OutDir at load time -->
+  <PropertyGroup>
+    <TargetVsixContainerName>$(AssemblyName).vsix</TargetVsixContainerName>
+    <TargetVsixContainer>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).vsix</TargetVsixContainer>
+  </PropertyGroup>
+
+
+  <!-- Embed the compiled .cto as a managed resource named "Menus.ctmenu" so VS can find
+       the command table at runtime via [ProvideMenuResource("Menus.ctmenu", 1)].
+       In SDK-style projects the MergeCtoResource pipeline only writes manifests for VSIX
+       packaging; it does NOT embed the resource in the DLL automatically. -->
+  <Target Name="_EmbedCtoResource" AfterTargets="VSCTCompile" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <EmbeddedResource Include="$(IntermediateOutputPath)$(AssemblyName).cto"
+                        Condition="Exists('$(IntermediateOutputPath)$(AssemblyName).cto')">
+        <LogicalName>Menus.ctmenu</LogicalName>
+        <Type>Non-Resx</Type>
+        <WithCulture>false</WithCulture>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+
+  <!-- $(TargetPath) is only resolved after Sdk.targets; set it lazily inside a target -->
+  <Target Name="_FixPkgDefAssemblyPath" BeforeTargets="GeneratePkgDef">
+    <PropertyGroup>
+      <CreatePkgDefAssemblyToProcess Condition="'$(CreatePkgDefAssemblyToProcess)' == ''">$(TargetPath)</CreatePkgDefAssemblyToProcess>
+    </PropertyGroup>
+  </Target>
+
+  <!-- Hook VSIX packaging into normal Build -->
+  <Target Name="BuildVsix" AfterTargets="Build" DependsOnTargets="GeneratePkgDef;CreateVsixContainer" />
+
+
+  <!-- Fix VSIX output path lazily ( and  are only available at target execution time) -->
+  <Target Name="_FixVsixOutputPath" BeforeTargets="CreateVsixContainer">
+    <PropertyGroup>
+      <TargetVsixContainerName Condition="'$(TargetVsixContainerName)' == ''">$(AssemblyName).vsix</TargetVsixContainerName>
+      <TargetVsixContainer Condition="'$(TargetVsixContainer)' == ''">$(OutputPath)$(TargetVsixContainerName)</TargetVsixContainer>
+    </PropertyGroup>
+  </Target>
+</Project>

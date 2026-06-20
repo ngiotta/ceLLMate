@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <Commands package="LLMContextVSPackageGuid">
+    <Menus>
+      <!-- ceLLMate top-level menu. Parented to IDG_VS_MM_TOOLSADDINS (0x0104) on the main menu bar
+           (guidSHLMainMenu = d309f791-903f-11d0-9efc-00a0c911004f).
+           In VS 2019+, this group is surfaced as the Extensions menu. -->
+      <Menu guid="CommandSetGuid" id="TopLevelMenu" priority="0x0100" type="Menu">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_MM_TOOLSADDINS"/>
+        <Strings>
+          <ButtonText>ceLLMate</ButtonText>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <Groups>
+      <!-- Group inside the ceLLMate menu -->
+      <Group guid="CommandSetGuid" id="ToolsMenuGroup" priority="0x0100">
+        <Parent guid="CommandSetGuid" id="TopLevelMenu"/>
+      </Group>
+
+      <!-- Solution Explorer project node context menu -->
+      <Group guid="CommandSetGuid" id="SolutionExplorerGroup" priority="0x0200">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
+      </Group>
+
+      <!-- Solution Explorer file node context menu -->
+      <Group guid="CommandSetGuid" id="SolutionExplorerItemGroup" priority="0x0201">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+      </Group>
+
+      <!-- Code editor context menu -->
+      <Group guid="CommandSetGuid" id="CodeWindowGroup" priority="0x0300">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="CommandSetGuid" id="cmdidOpenChatWindow" priority="0x0100" type="Button">
+        <Parent guid="CommandSetGuid" id="ToolsMenuGroup"/>
+        <Strings>
+          <ButtonText>Open Chat Window</ButtonText>
+          <CommandName>ceLLMate.OpenChatWindow</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="CommandSetGuid" id="cmdidAskFullContext" priority="0x0110" type="Button">
+        <Parent guid="CommandSetGuid" id="ToolsMenuGroup"/>
+        <Strings>
+          <ButtonText>Ask with full solution context</ButtonText>
+          <CommandName>ceLLMate.AskFullContext</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="CommandSetGuid" id="cmdidAskAboutFile" priority="0x0100" type="Button">
+        <Parent guid="CommandSetGuid" id="SolutionExplorerItemGroup"/>
+        <Strings>
+          <ButtonText>Ask ceLLMate about this file</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="CommandSetGuid" id="cmdidAskAboutProject" priority="0x0110" type="Button">
+        <Parent guid="CommandSetGuid" id="SolutionExplorerGroup"/>
+        <Strings>
+          <ButtonText>Ask ceLLMate about this project</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="CommandSetGuid" id="cmdidAskWithSelection" priority="0x0100" type="Button">
+        <Parent guid="CommandSetGuid" id="CodeWindowGroup"/>
+        <Strings>
+          <ButtonText>Ask ceLLMate about selection</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="LLMContextVSPackageGuid" value="{0b271c26-d001-4c5a-81c5-b66b74fc1727}" />
+
+    <!-- guidSHLMainMenu = the VS main menu bar -->
+    <GuidSymbol name="guidSHLMainMenu" value="{d309f791-903f-11d0-9efc-00a0c911004f}">
+      <IDSymbol name="IDG_VS_MM_TOOLSADDINS" value="0x0104" />  <!-- Extensions menu group -->
+      <IDSymbol name="IDM_VS_CTXT_PROJNODE"  value="0x0402" />
+      <IDSymbol name="IDM_VS_CTXT_ITEMNODE"  value="0x0430" />
+      <IDSymbol name="IDM_VS_CTXT_CODEWIN"   value="0x040D" />
+    </GuidSymbol>
+
+    <GuidSymbol name="CommandSetGuid" value="{b8c4f2a1-9e3d-4a2f-8c1b-2d7e6f5a9c1b}">
+      <IDSymbol name="TopLevelMenu"              value="0x0200" />
+      <IDSymbol name="ToolsMenuGroup"            value="0x0201" />
+      <IDSymbol name="SolutionExplorerGroup"     value="0x0210" />
+      <IDSymbol name="SolutionExplorerItemGroup" value="0x0211" />
+      <IDSymbol name="CodeWindowGroup"           value="0x0220" />
+
+      <IDSymbol name="cmdidOpenChatWindow"   value="0x0100" />
+      <IDSymbol name="cmdidAskAboutFile"     value="0x0110" />
+      <IDSymbol name="cmdidAskAboutProject"  value="0x0111" />
+      <IDSymbol name="cmdidAskWithSelection" value="0x0120" />
+      <IDSymbol name="cmdidAskFullContext"   value="0x0130" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
