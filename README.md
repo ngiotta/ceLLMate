@@ -4,6 +4,13 @@ A complete Visual Studio extension that gives local LLMs (Ollama, LM Studio, or 
 
 Works great with Visual Studio 2022 and Visual Studio 2026.
 
+***************************************************************************************************************************
+HIGHLY RECOMMENDED THAT YOUR CODE IS IN GIT.  IF YOU ARE USING INFERIOR LLM'S, IT COULD WIPE OUT CODE YOU DON'T WANT IT TO!
+---------------------------------------------------------------------------------------------------------------------------
+ALL 6B AND EVEN SOME 13B MODELS AREN'T ENOUGH TO HANDLE MULTI-TURN TOOL CALLING
+***************************************************************************************************************************
+
+
 ## Features
 
 - **Full Solution Context**: Automatically traverses your solution and injects relevant source files, project structure, and metadata into prompts.
